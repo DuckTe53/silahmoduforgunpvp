@@ -150,7 +150,7 @@ public final class ModItems {
 					for (GunItem gun : new GunItem[] { PISTOL, GLOCK_17, M4A1_S, M4A4, AK_47, AK_74M, P90, KRISS_VECTOR }) {
 						entries.accept(gun.createFull());
 					}
-					entries.accept(new ItemStack(MEDKIT, WeaponConfig.MEDKIT_MENU_GIVE));
+					entries.accept(MEDKIT);
 					entries.accept(HELMET_1);
 					entries.accept(VEST_1);
 					entries.accept(createHelmet2(context.holders()));
