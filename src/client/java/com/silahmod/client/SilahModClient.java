@@ -14,12 +14,12 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.event.client.player.ClientPreAttackCallback;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 
 public class SilahModClient implements ClientModInitializer {
 	public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(SilahMod.id("silahlar"));
@@ -34,8 +34,8 @@ public class SilahModClient implements ClientModInitializer {
 		menuKey = KeyBindingHelper.registerKeyBinding(
 				new KeyMapping("key.silahmod.menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, CATEGORY));
 
-		// Entity renderer
-		EntityRendererRegistry.register(ModEntities.BUGGY, BuggyRenderer::new);
+		// Entity renderer (1.21.11)
+		EntityRenderers.register(ModEntities.BUGGY, BuggyRenderer::new);
 
 		// R = doldur, B = silah menusu + buggy kontrol
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -53,7 +53,7 @@ public class SilahModClient implements ClientModInitializer {
 				}
 			}
 
-			// Buggy sürüş: W/S/A/D girdisini sunucuya gönder
+			// Buggy sürüş: W/S/A/D
 			LocalPlayer player = client.player;
 			if (player.getVehicle() instanceof BuggyEntity) {
 				float forward = 0.0F;
@@ -66,7 +66,6 @@ public class SilahModClient implements ClientModInitializer {
 			}
 		});
 
-		// Sol tik: elinde ates edilen silah varsa vanilla saldiri yerine ates et.
 		ClientPreAttackCallback.EVENT.register((client, player, clickCount) -> {
 			if (player.getMainHandItem().getItem() instanceof GunItem gun) {
 				boolean pressed = clickCount > 0;
