@@ -26,5 +26,7 @@
   "item.silahmod.ak_47": "AK-47",
   "item.silahmod.ak_74m": "AK-74M",
   "item.silahmod.p90": "FN P90",
+  "item.silahmod.knife": "Bıçak",
+  "message.silahmod.backstab": "ARKADAN SALDIRI!",
   "item.silahmod.kriss_vector": "Kriss Vector"
 }

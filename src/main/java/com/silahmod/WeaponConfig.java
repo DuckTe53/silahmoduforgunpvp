@@ -76,4 +76,12 @@ public final class WeaponConfig {
 	public static final int MEDKIT_ABSORB_HEARTS = 10;      // gecici sari kalp (10 kalp = 20 can)
 	public static final int MEDKIT_ABSORB_TICKS = 1200;     // sari kalplerin suresi -> 60 sn
 	public static final int MEDKIT_MENU_GIVE = 2;           // menuden alinca kac adet verilir
+
+	// ---------------- BICAK ----------------
+	public static final float KNIFE_BACKSTAB = 200.0F;     // arkadan
+	public static final float KNIFE_FRONT = hearts(3);     // onden govde = 6 HP
+	public static final float KNIFE_HEAD = hearts(6);      // onden kafa = 12 HP
+	public static final int KNIFE_COOLDOWN = 10;
+	/** Hedefin arkasindan sayilma acisi: 0.5 = yaklasik 60 derece koni. */
+	public static final double KNIFE_BACK_DOT = 0.5;
 }

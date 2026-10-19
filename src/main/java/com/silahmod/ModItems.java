@@ -3,6 +3,7 @@ package com.silahmod;
 import java.util.function.Function;
 
 import com.silahmod.item.GunItem;
+import com.silahmod.item.KnifeItem;
 import com.silahmod.item.MedkitItem;
 
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
@@ -40,6 +41,10 @@ public final class ModItems {
 	public static final GunItem AK_74M = gun("ak_74m", WeaponConfig.AK_74M);
 	public static final GunItem P90 = gun("p90", WeaponConfig.P90);
 	public static final GunItem KRISS_VECTOR = gun("kriss_vector", WeaponConfig.KRISS_VECTOR);
+
+	/** Bicak: hasar mantigi (arkadan / onden / kafa) Combat.onAttack icinde. Sayilar WeaponConfig'de. */
+	public static final KnifeItem KNIFE = register("knife", KnifeItem::new,
+			new Item.Properties().stacksTo(1));
 
 	// ---------------- ZIRHLAR (klasik envanterdeki zirh yuvalarindan giyilir) ----------------
 	/** Kask 1: demir kask gibi 2 zirh. Kafa hasari azaltmasi Armors.java'da. */
@@ -115,12 +120,12 @@ public final class ModItems {
 	}
 
 	/** Menudeki toplam esya sayisi. */
-	public static final int COUNT = 13;
+	public static final int COUNT = 14;
 
 	/**
 	 * Menu sirasi (Net.GiveWeaponPayload ve WeaponMenuScreen ile ayni):
 	 * 0 pistol, 1 glock 17, 2 m4a1-s, 3 m4a4, 4 ak-47, 5 ak-74m, 6 p90, 7 kriss vector,
-	 * 8 kask 1, 9 yelek 1, 10 kask 2, 11 yelek 2, 12 medkit
+	 * 8 kask 1, 9 yelek 1, 10 kask 2, 11 yelek 2, 12 medkit, 13 bicak
 	 */
 	public static Item byIndex(int index) {
 		return switch (index) {
@@ -137,6 +142,7 @@ public final class ModItems {
 			case 10 -> HELMET_2;
 			case 11 -> VEST_2;
 			case 12 -> MEDKIT;
+			case 13 -> KNIFE;
 			default -> null;
 		};
 	}
@@ -150,7 +156,8 @@ public final class ModItems {
 					for (GunItem gun : new GunItem[] { PISTOL, GLOCK_17, M4A1_S, M4A4, AK_47, AK_74M, P90, KRISS_VECTOR }) {
 						entries.accept(gun.createFull());
 					}
-					entries.accept(MEDKIT);
+					entries.accept(KNIFE);
+					entries.accept(new ItemStack(MEDKIT, WeaponConfig.MEDKIT_MENU_GIVE));
 					entries.accept(HELMET_1);
 					entries.accept(VEST_1);
 					entries.accept(createHelmet2(context.holders()));

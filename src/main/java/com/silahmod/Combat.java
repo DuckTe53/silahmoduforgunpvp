@@ -3,20 +3,26 @@ package com.silahmod;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.silahmod.item.GunItem;
+import com.silahmod.item.KnifeItem;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 
-/** Sunucu tarafi savas mantigi: atis (seri ates dahil), sarjor doldurma, silah verme. */
+/** Sunucu tarafi savas mantigi: atis (seri ates dahil), sarjor doldurma, bicak vurusu, silah verme. */
 public final class Combat {
 	private Combat() {}
 
@@ -36,13 +42,16 @@ public final class Combat {
 
 	/** Oyuncunun bir sonraki atisi yapabilecegi zaman (tick, kusuratli: 1.33 tick'lik atis hizi icin). */
 	private static final Map<UUID, Double> NEXT_SHOT = new HashMap<>();
+	private static final Map<UUID, Long> KNIFE_NEXT = new HashMap<>();
 	private static final Map<UUID, Reload> RELOADS = new HashMap<>();
 
 	public static void init() {
 		ServerTickEvents.END_SERVER_TICK.register(Combat::tick);
+		AttackEntityCallback.EVENT.register(Combat::onAttack);
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			UUID id = handler.getPlayer().getUUID();
 			NEXT_SHOT.remove(id);
+			KNIFE_NEXT.remove(id);
 			RELOADS.remove(id);
 		});
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
@@ -193,6 +202,60 @@ public final class Combat {
 		if (frame - 1 < sounds.length && sounds[frame - 1] != null) {
 			Sfx.play(level, player.getX(), player.getEyeY(), player.getZ(), sounds[frame - 1], 0.9F, 1.0F);
 		}
+	}
+
+	// ---------------------------------------------------------------- BICAK
+
+	private static InteractionResult onAttack(net.minecraft.world.entity.player.Player player,
+			net.minecraft.world.level.Level world, net.minecraft.world.InteractionHand hand,
+			net.minecraft.world.entity.Entity entity, net.minecraft.world.phys.EntityHitResult hitResult) {
+		if (!(world instanceof ServerLevel level) || !(player instanceof ServerPlayer attacker)) {
+			return InteractionResult.PASS; // istemcide dokunma: vurus paketi sunucuya gitsin
+		}
+		if (!(attacker.getMainHandItem().getItem() instanceof KnifeItem) || !(entity instanceof LivingEntity target)) {
+			return InteractionResult.PASS;
+		}
+		if (attacker.isSpectator()) {
+			return InteractionResult.PASS;
+		}
+
+		UUID id = attacker.getUUID();
+		long now = level.getGameTime();
+		if (now < KNIFE_NEXT.getOrDefault(id, 0L)) {
+			return InteractionResult.FAIL;
+		}
+		KNIFE_NEXT.put(id, now + WeaponConfig.KNIFE_COOLDOWN);
+
+		// Vurusun hedefin neresine geldigi
+		Vec3 eye = attacker.getEyePosition();
+		Vec3 reach = eye.add(attacker.getLookAngle().scale(6.0));
+		Optional<Vec3> hit = target.getBoundingBox().inflate(target.getPickRadius()).clip(eye, reach);
+		boolean head = hit.isPresent() && Ballistics.isHeadHit(target, hit.get());
+
+		// Arkadan mi? Saldirganin bakisi ile hedefin bakisi ayni yone gidiyorsa arkadan.
+		Vec3 attackerLook = flat(attacker.getLookAngle());
+		Vec3 targetLook = flat(target.getViewVector(1.0F));
+		boolean backstab = attackerLook.dot(targetLook) > WeaponConfig.KNIFE_BACK_DOT;
+
+		float damage;
+		if (backstab) {
+			damage = WeaponConfig.KNIFE_BACKSTAB;
+			message(attacker, "message.silahmod.backstab");
+		} else if (head) {
+			damage = WeaponConfig.KNIFE_HEAD;
+			message(attacker, "message.silahmod.headshot");
+		} else {
+			damage = WeaponConfig.KNIFE_FRONT * Armors.bodyFactor(target); // yelek govde hasarini azaltir
+		}
+
+		Ballistics.damage(level, attacker, target, damage);
+		Sfx.play(level, target.getX(), target.getEyeY(), target.getZ(), "entity.player.attack.strong", 1.0F, 1.0F);
+		return InteractionResult.SUCCESS; // vanilla vurusu iptal
+	}
+
+	private static Vec3 flat(Vec3 v) {
+		Vec3 flat = new Vec3(v.x, 0.0, v.z);
+		return flat.lengthSqr() < 1.0E-6 ? new Vec3(0, 0, 1) : flat.normalize();
 	}
 
 	// ----------------------------------------------------------- ESYA VERME
