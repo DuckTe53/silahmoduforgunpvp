@@ -157,7 +157,7 @@ public final class ModItems {
 						entries.accept(gun.createFull());
 					}
 					entries.accept(KNIFE);
-					entries.accept(new ItemStack(MEDKIT, WeaponConfig.MEDKIT_MENU_GIVE));
+					entries.accept(MEDKIT);
 					entries.accept(HELMET_1);
 					entries.accept(VEST_1);
 					entries.accept(createHelmet2(context.holders()));
