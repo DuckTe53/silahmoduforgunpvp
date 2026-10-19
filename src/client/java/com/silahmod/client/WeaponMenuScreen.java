@@ -24,15 +24,15 @@ public class WeaponMenuScreen extends Screen {
 			"item.silahmod.pistol", "item.silahmod.glock_17", "item.silahmod.m4a1_s", "item.silahmod.m4a4",
 			"item.silahmod.ak_47", "item.silahmod.ak_74m", "item.silahmod.p90", "item.silahmod.kriss_vector",
 			"item.silahmod.helmet_1", "item.silahmod.vest_1", "item.silahmod.helmet_2", "item.silahmod.vest_2",
-			"item.silahmod.medkit", "item.silahmod.knife"
+			"item.silahmod.medkit", "item.silahmod.knife", "item.silahmod.buggy"
 	};
 	/** Menu yerlesimi: her sutun icin esya indeksleri. Sutun 0-1 = Silahlar, sutun 2 = Zirhlar ve medkit. */
 	private static final int[][] COLUMNS = {
 			{ 0, 1, 2, 3 },
-			{ 4, 5, 6, 7, 13 },
+			{ 4, 5, 6, 7, 13, 14 },
 			{ 8, 9, 10, 11, 12 }
 	};
-	private static final int ROWS = 5;           // en uzun sutunda 5 esya
+	private static final int ROWS = 6;           // en uzun sutunda 6 esya
 	private static final int BUTTON_W = 104;
 	private static final int BUTTON_H = 22;
 	private static final int GAP = 5;

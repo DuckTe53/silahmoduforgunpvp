@@ -2,6 +2,7 @@ package com.silahmod;
 
 import java.util.function.Function;
 
+import com.silahmod.item.BuggyItem;
 import com.silahmod.item.GunItem;
 import com.silahmod.item.KnifeItem;
 import com.silahmod.item.MedkitItem;
@@ -44,6 +45,10 @@ public final class ModItems {
 
 	/** Bicak: hasar mantigi (arkadan / onden / kafa) Combat.onAttack icinde. Sayilar WeaponConfig'de. */
 	public static final KnifeItem KNIFE = register("knife", KnifeItem::new,
+			new Item.Properties().stacksTo(1));
+
+	/** PUBG tarzı sarı buggy. Sağ tık ile yere bırakılır, binilip sürülür. */
+	public static final Item BUGGY = register("buggy", BuggyItem::new,
 			new Item.Properties().stacksTo(1));
 
 	// ---------------- ZIRHLAR (klasik envanterdeki zirh yuvalarindan giyilir) ----------------
@@ -120,12 +125,12 @@ public final class ModItems {
 	}
 
 	/** Menudeki toplam esya sayisi. */
-	public static final int COUNT = 14;
+	public static final int COUNT = 15;
 
 	/**
 	 * Menu sirasi (Net.GiveWeaponPayload ve WeaponMenuScreen ile ayni):
 	 * 0 pistol, 1 glock 17, 2 m4a1-s, 3 m4a4, 4 ak-47, 5 ak-74m, 6 p90, 7 kriss vector,
-	 * 8 kask 1, 9 yelek 1, 10 kask 2, 11 yelek 2, 12 medkit, 13 bicak
+	 * 8 kask 1, 9 yelek 1, 10 kask 2, 11 yelek 2, 12 medkit, 13 bicak, 14 buggy
 	 */
 	public static Item byIndex(int index) {
 		return switch (index) {
@@ -143,6 +148,7 @@ public final class ModItems {
 			case 11 -> VEST_2;
 			case 12 -> MEDKIT;
 			case 13 -> KNIFE;
+			case 14 -> BUGGY;
 			default -> null;
 		};
 	}
@@ -157,7 +163,8 @@ public final class ModItems {
 						entries.accept(gun.createFull());
 					}
 					entries.accept(KNIFE);
-					entries.accept(MEDKIT);
+					entries.accept(BUGGY);
+					entries.accept(new ItemStack(MEDKIT, WeaponConfig.MEDKIT_MENU_GIVE));
 					entries.accept(HELMET_1);
 					entries.accept(VEST_1);
 					entries.accept(createHelmet2(context.holders()));

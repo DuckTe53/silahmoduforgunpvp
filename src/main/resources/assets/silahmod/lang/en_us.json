@@ -28,5 +28,7 @@
   "item.silahmod.p90": "FN P90",
   "item.silahmod.knife": "Knife",
   "message.silahmod.backstab": "BACKSTAB!",
-  "item.silahmod.kriss_vector": "Kriss Vector"
+  "item.silahmod.kriss_vector": "Kriss Vector",
+  "item.silahmod.buggy": "Buggy",
+  "entity.silahmod.buggy": "Buggy"
 }

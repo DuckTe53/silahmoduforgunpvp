@@ -13,6 +13,7 @@ public class SilahMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ModComponents.init();
+		ModEntities.init();
 		ModItems.init();
 		Net.init();
 		Combat.init();
